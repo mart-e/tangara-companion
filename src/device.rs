@@ -1,7 +1,7 @@
 use std::time::Duration;
 
-use futures::{future, SinkExt, Stream, StreamExt};
 use futures::channel::mpsc;
+use futures::{future, SinkExt, Stream, StreamExt};
 use gtk::glib;
 use tangara_lib::device::{ConnectionParams, Tangara};
 
@@ -46,7 +46,13 @@ pub fn watch() -> impl Stream<Item = Option<Tangara>> {
                 None => Ok(None),
             }
         })
-        .filter_map(|result| future::ready(result
-            .map_err(|error| { eprintln!("error opening tangara: {error:?}"); })
-            .ok()))
+        .filter_map(|result| {
+            future::ready(
+                result
+                    .map_err(|error| {
+                        eprintln!("error opening tangara: {error:?}");
+                    })
+                    .ok(),
+            )
+        })
 }

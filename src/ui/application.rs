@@ -3,8 +3,8 @@ use std::rc::Rc;
 use derive_more::Deref;
 use tangara_lib::device::Tangara;
 
-use crate::ui;
 use super::nav::MainView;
+use crate::ui;
 
 #[derive(Deref)]
 pub struct Application {
@@ -46,10 +46,7 @@ impl Application {
             theme.add_resource_path("/zone/cooltech/tangara/Companion/icons");
         }
 
-        Application {
-            window,
-            view,
-        }
+        Application { window, view }
     }
 
     pub fn set_tangara(&self, tangara: Option<Tangara>) {

@@ -10,11 +10,13 @@ pub struct NavPageBuilder {
 
 impl NavPageBuilder {
     pub fn new(object: &impl IsA<gtk::Widget>) -> Self {
-        let view = adw::ToolbarView::builder()
-            .content(object)
-            .build();
+        let view = adw::ToolbarView::builder().content(object).build();
 
-        Self { view, title: String::new(), header: None }
+        Self {
+            view,
+            title: String::new(),
+            header: None,
+        }
     }
 
     pub fn clamped(object: &impl IsA<gtk::Widget>) -> Self {
@@ -57,9 +59,7 @@ pub fn spinner_content() -> gtk::Box {
         .valign(Align::Center)
         .build();
 
-    let spinner = gtk::Spinner::builder()
-        .spinning(true)
-        .build();
+    let spinner = gtk::Spinner::builder().spinning(true).build();
 
     box_.append(&spinner);
 

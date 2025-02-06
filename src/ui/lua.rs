@@ -25,9 +25,7 @@ pub fn page(device: DeviceContext) -> adw::NavigationPage {
     let header = adw::HeaderBar::new();
     let footer = Footer::new(highlight.clone());
 
-    let view = adw::ToolbarView::builder()
-        .content(&*console)
-        .build();
+    let view = adw::ToolbarView::builder().content(&*console).build();
 
     view.add_top_bar(&header);
     view.add_bottom_bar(&*footer);
@@ -39,7 +37,9 @@ pub fn page(device: DeviceContext) -> adw::NavigationPage {
 
     page.connect_root_notify({
         let entry = footer.entry.clone();
-        move |_| { entry.grab_focus(); }
+        move |_| {
+            entry.grab_focus();
+        }
     });
 
     footer.entry.connect_activate(move |entry| {
@@ -69,10 +69,7 @@ fn input_line(highlight: &Highlight, line: &str) -> gtk::Box {
 
     let attrs = highlight.process(line);
 
-    let input = gtk::Label::builder()
-        .label(line)
-        .attributes(&attrs)
-        .build();
+    let input = gtk::Label::builder().label(line).attributes(&attrs).build();
 
     let line = gtk::Box::builder()
         .orientation(gtk::Orientation::Horizontal)
@@ -169,9 +166,7 @@ impl Footer {
     pub fn new(highlight: Highlight) -> Self {
         let entry = entry::entry(highlight);
 
-        let prompt = gtk::Label::builder()
-            .label(PROMPT)
-            .build();
+        let prompt = gtk::Label::builder().label(PROMPT).build();
 
         let footer = gtk::Box::builder()
             .orientation(gtk::Orientation::Horizontal)

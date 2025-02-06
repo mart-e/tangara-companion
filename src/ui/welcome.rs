@@ -1,5 +1,5 @@
-use gtk::{Align, Orientation};
 use gtk::prelude::BoxExt;
+use gtk::{Align, Orientation};
 
 use crate::ui;
 
@@ -19,18 +19,11 @@ pub fn page() -> adw::NavigationPage {
     box_.append(&logo);
     box_.append(&label);
 
-    let clamp = adw::Clamp::builder()
-        .maximum_size(400)
-        .child(&box_)
-        .build();
+    let clamp = adw::Clamp::builder().maximum_size(400).child(&box_).build();
 
-    let header = adw::HeaderBar::builder()
-        .show_title(false)
-        .build();
+    let header = adw::HeaderBar::builder().show_title(false).build();
 
-    let view = adw::ToolbarView::builder()
-        .content(&clamp)
-        .build();
+    let view = adw::ToolbarView::builder().content(&clamp).build();
 
     view.add_top_bar(&header);
 

@@ -19,9 +19,7 @@ impl LabelRow {
             .label(value)
             .build();
 
-        let row = adw::ActionRow::builder()
-            .title(title)
-            .build();
+        let row = adw::ActionRow::builder().title(title).build();
 
         row.add_suffix(&label);
 

@@ -37,7 +37,7 @@ impl Highlight {
 
         let Some(tree) = self.parser.borrow_mut().parse(text, None) else {
             println!("highlight");
-            return attrs
+            return attrs;
         };
 
         let cursor = SyntaxCursor::new(&tree);
@@ -177,8 +177,12 @@ impl Render {
             return;
         };
 
-        let Some(start) = u32::try_from(node.start_byte()).ok() else { return };
-        let Some(end) = u32::try_from(node.end_byte()).ok() else { return };
+        let Some(start) = u32::try_from(node.start_byte()).ok() else {
+            return;
+        };
+        let Some(end) = u32::try_from(node.end_byte()).ok() else {
+            return;
+        };
 
         if style.bold {
             let mut bold = AttrFontDesc::new(&self.bold);

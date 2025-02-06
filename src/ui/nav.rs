@@ -4,12 +4,12 @@ use std::rc::{Rc, Weak};
 use adw::prelude::BinExt;
 use derive_more::Deref;
 use glib::WeakRef;
-use gtk::prelude::{GridExt, WidgetExt, ListBoxRowExt};
+use gtk::prelude::{GridExt, ListBoxRowExt, WidgetExt};
 
 use tangara_lib::device::Tangara;
 
-use crate::ui;
 use super::application::DeviceContext;
+use crate::ui;
 
 #[derive(Deref)]
 pub struct MainView {
@@ -43,11 +43,9 @@ impl MainView {
             }
             Some(tangara) => {
                 let list = DeviceNavBuilder::new(tangara, self.controller.clone())
-                    .add_item(
-                        "Overview",
-                        "companion-overview-symbolic",
-                        move |device| ui::overview::page(device),
-                    )
+                    .add_item("Overview", "companion-overview-symbolic", move |device| {
+                        ui::overview::page(device)
+                    })
                     .add_item(
                         "Lua Console",
                         "companion-lua-console-symbolic",
@@ -77,13 +75,9 @@ impl Sidebar {
     pub fn new() -> Self {
         let device_nav = adw::Bin::new();
 
-        let view = adw::ToolbarView::builder()
-            .content(&device_nav)
-            .build();
+        let view = adw::ToolbarView::builder().content(&device_nav).build();
 
-        view.add_top_bar(
-            &adw::HeaderBar::builder()
-                .build());
+        view.add_top_bar(&adw::HeaderBar::builder().build());
 
         let sidebar = adw::NavigationPage::builder()
             .title("Tangara Companion")
@@ -143,9 +137,9 @@ impl DeviceNavBuilder {
     }
 
     pub fn add_item<Func, Page>(mut self, label: &str, icon: &str, action: Func) -> Self
-        where
-            Func: Fn(DeviceContext) -> Page + 'static,
-            Page: Into<adw::NavigationPage>,
+    where
+        Func: Fn(DeviceContext) -> Page + 'static,
+        Page: Into<adw::NavigationPage>,
     {
         self.list.append(&sidebar_row(label, icon));
         self.actions.push(Box::new(move |ctx| action(ctx).into()));
@@ -160,8 +154,12 @@ impl DeviceNavBuilder {
             let context = self.context;
             let controller = self.controller;
             move |_, row| {
-                let Ok(index) = usize::try_from(row.index()) else { return };
-                let Some(action) = actions.get(index) else { return };
+                let Ok(index) = usize::try_from(row.index()) else {
+                    return;
+                };
+                let Some(action) = actions.get(index) else {
+                    return;
+                };
                 let page = action(context.clone());
                 controller.present(&page);
             }
@@ -212,8 +210,12 @@ pub struct DeviceNavLocked {
 
 impl Drop for DeviceNavLocked {
     fn drop(&mut self) {
-        let Some(nav) = self.nav.upgrade() else { return };
-        let Some(list) = nav.list.upgrade() else { return };
+        let Some(nav) = self.nav.upgrade() else {
+            return;
+        };
+        let Some(list) = nav.list.upgrade() else {
+            return;
+        };
 
         let count = nav.lock_count.get();
         let count = count.saturating_sub(1);
@@ -225,10 +227,7 @@ impl Drop for DeviceNavLocked {
     }
 }
 
-fn sidebar_row(
-    label_text: &str,
-    icon_name: &str,
-) -> gtk::ListBoxRow {
+fn sidebar_row(label_text: &str, icon_name: &str) -> gtk::ListBoxRow {
     let grid = gtk::Grid::builder()
         .valign(gtk::Align::Center)
         .column_spacing(12)
@@ -248,7 +247,5 @@ fn sidebar_row(
 
     grid.attach(&label, 2, 1, 1, 1);
 
-    gtk::ListBoxRow::builder()
-        .child(&grid)
-        .build()
+    gtk::ListBoxRow::builder().child(&grid).build()
 }

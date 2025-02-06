@@ -19,9 +19,7 @@ fn main() -> glib::ExitCode {
 
     tangara_companion_resources::init();
 
-    let app = adw::Application::builder()
-        .application_id(APP_ID)
-        .build();
+    let app = adw::Application::builder().application_id(APP_ID).build();
 
     app.connect_activate(start);
 

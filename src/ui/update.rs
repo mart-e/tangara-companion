@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
 use adw::prelude::{ActionRowExt, PreferencesGroupExt, PreferencesPageExt};
-use futures::StreamExt;
 use futures::channel::mpsc::Receiver;
+use futures::StreamExt;
 use glib::object::Cast;
 use glib::types::StaticType;
 use glib::WeakRef;
-use gtk::{Align, FileDialog, FileFilter, Orientation};
 use gtk::gio::{Cancellable, File};
 use gtk::prelude::{BoxExt, ButtonExt, FileExt, WidgetExt};
+use gtk::{Align, FileDialog, FileFilter, Orientation};
 
 use tangara_lib::firmware::Firmware;
 use tangara_lib::flash::{FlashError, FlashStatus};
@@ -26,9 +26,7 @@ pub fn flow(device: DeviceContext) -> adw::NavigationPage {
         nav: weak(&nav),
     }));
 
-    adw::NavigationPage::builder()
-        .child(&nav)
-        .build()
+    adw::NavigationPage::builder().child(&nav).build()
 }
 
 #[derive(Clone)]
@@ -57,9 +55,11 @@ fn select_group(ctx: UpdateContext) -> adw::PreferencesGroup {
         .activatable(true)
         .build();
 
-    select_firmware.add_suffix(&gtk::Image::builder()
-        .icon_name("companion-folder-symbolic")
-        .build());
+    select_firmware.add_suffix(
+        &gtk::Image::builder()
+            .icon_name("companion-folder-symbolic")
+            .build(),
+    );
 
     select_firmware.connect_activated(move |widget| {
         let filter = FileFilter::new();
@@ -127,14 +127,15 @@ fn review_firmware_page(ctx: UpdateContext, firmware: Arc<Firmware>) -> adw::Nav
 
     let details_group = adw::PreferencesGroup::new();
 
-    details_group.add(&*LabelRow::new("Firmware", &firmware.path().display().to_string()));
+    details_group.add(&*LabelRow::new(
+        "Firmware",
+        &firmware.path().display().to_string(),
+    ));
     details_group.add(&*LabelRow::new("Version", firmware.version()));
 
     let flash_group = adw::PreferencesGroup::new();
 
-    let flash_button = gtk::Button::builder()
-        .label("Flash!")
-        .build();
+    let flash_button = gtk::Button::builder().label("Flash!").build();
 
     flash_button.connect_clicked({
         let ctx = ctx.clone();
@@ -169,26 +170,28 @@ fn flash_page(ctx: UpdateContext, firmware: Arc<Firmware>) -> adw::NavigationPag
         .spacing(20)
         .build();
 
-    box_.append(&gtk::Label::builder()
-        .label("Do not disconnect Tangara")
-        .build());
+    box_.append(
+        &gtk::Label::builder()
+            .label("Do not disconnect Tangara")
+            .build(),
+    );
 
-    let progress_bar = gtk::ProgressBar::builder()
-        .build();
+    let progress_bar = gtk::ProgressBar::builder().build();
 
-    let status_label = gtk::Label::builder()
-        .build();
+    let status_label = gtk::Label::builder().build();
 
     box_.append(&progress_bar);
     box_.append(&status_label);
 
     let page = NavPageBuilder::clamped(&box_)
         .title("Flashing Tangara")
-        .header(adw::HeaderBar::builder()
-            .show_back_button(false)
-            .show_end_title_buttons(false)
-            .show_start_title_buttons(false)
-            .build())
+        .header(
+            adw::HeaderBar::builder()
+                .show_back_button(false)
+                .show_end_title_buttons(false)
+                .show_start_title_buttons(false)
+                .build(),
+        )
         .build();
 
     // lock the app global navigation while we're flashing
@@ -196,9 +199,7 @@ fn flash_page(ctx: UpdateContext, firmware: Arc<Firmware>) -> adw::NavigationPag
 
     // start flash now UI is built
     glib::spawn_future_local(async move {
-        let (flash, task) = ctx.device.tangara
-            .setup_flash(firmware)
-            .await;
+        let (flash, task) = ctx.device.tangara.setup_flash(firmware).await;
 
         // spawn blocking flash task
         gtk::gio::spawn_blocking(move || task.run());
@@ -240,9 +241,7 @@ async fn flash_progress_task(
 
     while let Some(progress) = progress.next().await {
         match progress {
-            FlashStatus::StartingFlash => {
-                status_label.set_label("Starting flash")
-            }
+            FlashStatus::StartingFlash => status_label.set_label("Starting flash"),
             FlashStatus::Image(image) => {
                 status_label.set_label(&format!("Writing {image}..."));
                 progress_bar.set_fraction(0.0);
@@ -276,13 +275,11 @@ fn complete(message: Result<(), Option<FlashError>>) -> adw::NavigationPage {
                 Some(error) => format!("{error}"),
                 None => "Unknown error".to_string(),
             })
-            .build()
+            .build(),
     };
 
     NavPageBuilder::clamped(&status_page)
         .title(status_page.title().as_str())
-        .header(adw::HeaderBar::builder()
-            .show_title(false)
-            .build())
+        .header(adw::HeaderBar::builder().show_title(false).build())
         .build()
 }
